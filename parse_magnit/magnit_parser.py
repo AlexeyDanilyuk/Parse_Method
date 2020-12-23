@@ -59,8 +59,7 @@ class MagnitParser:
         product = {
             'url': urljoin(self.url, tag_product.get('href')),
             'promo_name': tag_product.contents[1].string,
-            'product_name':
-                list(tag_product.findNext('div', attrs={'class': 'card-sale__title'}))[0].contents[0],
+            'product_name': list(tag_product.findNext('div', attrs={'class': 'card-sale__title'}))[0].contents[0],
             'old_price': float(old_price),
             'new_price': float(new_price),
             'image_url': urljoin(self.url, list(tag_product.find('picture'))[1].attrs['data-srcset']),
