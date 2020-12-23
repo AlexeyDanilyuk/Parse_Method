@@ -45,24 +45,24 @@ class MagnitParser:
             yield self._product_parse(tag_product)
 
     def _product_parse(self, tag_product: bs4.Tag) -> dict:
-        old = list(tag_product.findNext("div", attrs={"class": "label__price label__price_old"}))
-        new = list(tag_product.findNext("div", attrs={"class": "label__price label__price_new"}))
-        if old[1].contents[0]:
-            old_price = f'{old[1].contents[0]}.{old[3].contents[0]}'
-        else:
-            old_price = 0.00
-        if new[1].contents[0]:
+        try:
+            new = list(tag_product.findNext("div", attrs={"class": "label__price label__price_new"}))
             new_price = f'{new[1].contents[0]}.{new[3].contents[0]}'
-        else:
+        except:
             new_price = 0.00
+        try:
+            old = list(tag_product.findNext("div", attrs={"class": "label__price label__price_old"}))
+            old_price = f'{old[1].contents[0]}.{old[3].contents[0]}'
+        except:
+            old_price = 0.00
 
         product = {
             'url': urljoin(self.url, tag_product.get('href')),
             'promo_name': tag_product.contents[1].string,
             'product_name':
                 list(tag_product.findNext('div', attrs={'class': 'card-sale__title'}))[0].contents[0],
-            'old_price': old_price,
-            'new_price': new_price,
+            'old_price': float(old_price),
+            'new_price': float(new_price),
             'image_url': urljoin(self.url, list(tag_product.find('picture'))[1].attrs['data-srcset']),
             'date_from': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'date_to': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
